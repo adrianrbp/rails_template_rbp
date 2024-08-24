@@ -23,23 +23,30 @@ def add_testing_gems
 
   run "bundle install"
 
-  generate("rspec:install")
+  generate "rspec:install"
+  #rails_command "generate rspec:install"
 end
 
+def config_rspec
+  remove_file "spec/rails_helper.rb"
+
+  copy_file "spec/rails_helper.rb", "spec/rails_helper.rb"
+
+  empty_directory "spec/support"
+
+  # Copy your custom support files
+  copy_file "spec/support/database_cleaner.rb", "spec/support/database_cleaner.rb"
+  copy_file "spec/support/factory_bot.rb", "spec/support/factory_bot.rb"
+  copy_file "spec/support/shoulda_matchers.rb", "spec/support/shoulda_matchers.rb"
+end
+
+# Main Setup
+# source_path = File.expand_path(File.dirname(__FILE__))
+source_paths.unshift(File.dirname(__FILE__))
+
 add_testing_gems
+config_rspec
 
-source_path = File.expand_path(File.dirname(__FILE__))
-
-remove_file "spec/rails_helper.rb"
-
-copy_file "#{source_path}/spec/rails_helper.rb", "spec/rails_helper.rb"
-
-empty_directory "spec/support"
-
-# Copy your custom support files
-copy_file "#{source_path}/spec/support/database_cleaner.rb", "spec/support/database_cleaner.rb"
-copy_file "#{source_path}/spec/support/factory_bot.rb", "spec/support/factory_bot.rb"
-copy_file "#{source_path}/spec/support/shoulda_matchers.rb", "spec/support/shoulda_matchers.rb"
 after_bundle do
   git :init
 end
