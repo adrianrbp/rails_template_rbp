@@ -20,33 +20,39 @@ def add_testing_gems
     gem 'database_cleaner'
     gem 'database_cleaner-active_record'
   end
-
-  run "bundle install"
-
-  generate "rspec:install"
-  #rails_command "generate rspec:install"
 end
 
 def config_rspec
+  generate "rspec:install"
+  #rails_command "generate rspec:install"
   remove_file "spec/rails_helper.rb"
 
-  copy_file "spec/rails_helper.rb", "spec/rails_helper.rb"
+  copy_file "spec/rails_helper.rb"
 
-  empty_directory "spec/support"
+  directory "spec/support"
 
-  # Copy your custom support files
-  copy_file "spec/support/database_cleaner.rb", "spec/support/database_cleaner.rb"
-  copy_file "spec/support/factory_bot.rb", "spec/support/factory_bot.rb"
-  copy_file "spec/support/shoulda_matchers.rb", "spec/support/shoulda_matchers.rb"
+  append_to_file '.rspec', "--format documentation\n--color"
 end
 
 # Main Setup
-# source_path = File.expand_path(File.dirname(__FILE__))
 source_paths.unshift(File.dirname(__FILE__))
 
 add_testing_gems
-config_rspec
 
 after_bundle do
+  config_rspec
+
   git :init
+
+  say
+  say "Template RBP Done!", :blue
+  say
+  say "To get started with your new app:", :green
+  say "  cd #{original_app_name}"
+  say
+  say "  # Update config/database.yml with your database credentials"
+  say
+  say "  rails db:create"
+  say "  rails db:migrate"
+  say "  bin/dev"
 end
