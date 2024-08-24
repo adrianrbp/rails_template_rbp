@@ -1,0 +1,3 @@
+--css=tailwind
+--database=sqlite3
+-T
